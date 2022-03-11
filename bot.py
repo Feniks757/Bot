@@ -19,6 +19,7 @@ def user_welcome(update, context):
 
 
 def image_generate(update, context):
+
     colours = {"Красный": (255, 0, 0, 255), "Синий": (0, 0, 255, 255), "Зеленый": (0, 255, 0, 255)}
     user_text = update.message.text
     img = Image.new('RGBA', (100, 100), colours[user_text])
@@ -28,6 +29,8 @@ def image_generate(update, context):
         img.save(bio, 'PNG')
         bio.seek(0)
         mybot.bot.send_photo(chat_id=chat_id, photo=bio)
+        my_keyboard = ReplyKeyboardMarkup([[' ', '🔼', ' '], ['◀', 'назад', '▶'], [' ', '🔽', ' ']], resize_keyboard=True)
+        update.message.reply_text('Выберите направление', reply_markup=my_keyboard)
 
 
 def user_find_colour(update, context):
@@ -57,6 +60,10 @@ def main():
     dp.add_handler(CommandHandler("start", user_welcome))
     dp.add_handler(MessageHandler(Filters.text('Поиск цвета'), user_find_colour))
     dp.add_handler(MessageHandler(Filters.text(['Красный', 'Синий', 'Зеленый']), generate_colour))
+    dp.add_handler(MessageHandler(Filters.text(['^']), generate_colour))
+    dp.add_handler(MessageHandler(Filters.text(['<']), generate_colour))
+    dp.add_handler(MessageHandler(Filters.text(['>']), generate_colour))
+    dp.add_handler(MessageHandler(Filters.text(['v']), generate_colour))
     mybot.start_polling()
     mybot.idle()
 
