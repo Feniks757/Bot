@@ -22,6 +22,7 @@ def image_generate(update, context):
 
     colours = {"Красный": (255, 0, 0, 255), "Синий": (0, 0, 255, 255), "Зеленый": (0, 255, 0, 255)}
     user_text = update.message.text
+
     img = Image.new('RGBA', (100, 100), colours[user_text])
     chat_id=update.effective_chat.id
     with BytesIO() as bio:
@@ -30,7 +31,11 @@ def image_generate(update, context):
         bio.seek(0)
         mybot.bot.send_photo(chat_id=chat_id, photo=bio)
         my_keyboard = ReplyKeyboardMarkup([[' ', '🔼', ' '], ['◀', 'назад', '▶'], [' ', '🔽', ' ']], resize_keyboard=True)
+        my_keyboard = ReplyKeyboardMarkup([[' ', '🔼', ' '], ['◀', 'назад', '▶'], [' ', '🔽', ' ']],
+                                          resize_keyboard=True)
         update.message.reply_text('Выберите направление', reply_markup=my_keyboard)
+        update.message.reply_text(colours[user_text])
+
 
 
 def user_find_colour(update, context):
@@ -39,6 +44,12 @@ def user_find_colour(update, context):
     # user_text = update.message.text
     # update.message.reply_text(user_text)
 
+
+def c_h(update, context):
+    chat_id = update.effective_chat.id
+    mybot.bot.send_photo(chat_id=chat_id, photo="палитра.png")
+    my_keyboard = ReplyKeyboardMarkup([[' ', '🔼', ' '], ['◀', 'назад', '▶'], [' ', '🔽', ' ']], resize_keyboard=True)
+    update.message.reply_text('Выберите направление', reply_markup=my_keyboard)
 
 def generate_colour(update, context, telebot=None):
     # mybot = Updater(BOT_KEY, use_context=True)
@@ -64,6 +75,9 @@ def main():
     dp.add_handler(MessageHandler(Filters.text(['<']), generate_colour))
     dp.add_handler(MessageHandler(Filters.text(['>']), generate_colour))
     dp.add_handler(MessageHandler(Filters.text(['v']), generate_colour))
+    dp.add_handler(MessageHandler(Filters.text(['[0, 255, 0, 255]']), c_h))
+    dp.add_handler(MessageHandler(Filters.text(['[0, 0, 255, 255]']), c_h))
+    dp.add_handler(MessageHandler(Filters.text(['[255, 0, 0, 255]']), c_h))
     mybot.start_polling()
     mybot.idle()
 
